@@ -27,7 +27,7 @@ def dconv(in_channels, out_channels):
         Swish(), 
     )
 
-class UNet(pl.LightningModule):
+class LightningUNet(pl.LightningModule):
     def __init__(self, n_class):
         super().__init__()
 
@@ -71,3 +71,44 @@ class UNet(pl.LightningModule):
         x = self.uconv1(x)
         out = self.lconv(x)
         return out
+
+    def loss(self, logits, labels):
+        return nn.BCEWithLogitsLoss(logits, labels)
+
+    def validation_step(self, val_batch, val_idx):
+        x, y = val_batch
+        logits = self.forward(x)
+        loss = self.loss(logits, y)
+        return {'val_loss' : loss}
+
+    def validation_epoch_end(self, outputs):
+        avg_loss = torch.stack[x['val_loss'] for x in outputs]).mean()
+        tensorboard_logs = {'vall_loss' : avg_loss}
+        return {'avg_val_loss'  avg_loss, 'log' : tensorboard_logs}
+    
+    def prepare_data(self):
+        # Add after data loader preparation
+        raise NotImplementedError
+
+
+    def train_dataloader(self):
+        return DataLoader(self.train_data, batch_size = 32)
+
+
+    def val_dataloader(self):
+        return DataLoader(self.val_data, batch_size = 32)
+
+    def test_dataloader(self):
+        return DataLoader(self.test_data, batch_size = 32)
+
+
+    def configure_optimizers(self):
+        optimizer = torch.optim.Adam(self.parameters(), lr = 1e-4)
+        return optimizer 
+
+def main():
+
+    model = LightningUNet()
+    trainer = pl.Trainer()
+
+    trainer.fit(model)
