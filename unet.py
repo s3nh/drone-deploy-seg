@@ -1,6 +1,8 @@
+import albumentations
 import os 
 import torch 
 import torch.nn as nn 
+from torch.utils.data import DataLoader
 import torch.nn.functional as F
 import torchvision
 import torchvision.models 
@@ -21,11 +23,11 @@ class Swish(nn.Module):
 def dconv(in_channels, out_channels):
     return nn.Sequential(
         nn.Conv2d(in_channels, out_channels, kernel_size = 3, padding = 1), 
-        #nn.ReLU(inplace =True),
-        Swish(), 
+        nn.ReLU(inplace =True),
+        #Swish(), 
         nn.Conv2d(out_channels, out_channels, kernel_size = 3, padding = 1), 
-        #nn.ReLU(inplace = True)
-        Swish(), 
+        nn.ReLU(inplace = True)
+        #Swish(), 
     )
 
 class LightningUNet(pl.LightningModule):
@@ -74,17 +76,19 @@ class LightningUNet(pl.LightningModule):
         return out
 
     def loss(self, logits, labels):
-        return nn.BCEWithLogitsLoss(logits, labels)
+        return nn.NLLLoss(logits, labels)
 
 
     def training_step(self, train_batch, batch_idx):
-        x, y = train_batch
+        x = train_batch['features'].to(device='cuda', dtype = torch.float32)
+        y = train_batch['masks'].to(device='cuda', dtype = torch.long)
         logits = self.forward(x)
         loss = self.loss(logits, y)
         return {'loss' : loss}
 
     def validation_step(self, val_batch, val_idx):
-        x, y = val_batch
+        x = val_batch['features'].to(device='cuda', dtype = torch.float32)
+        y = val_batch['masks'].to(device='cuda', dtype = torch.long)
         logits = self.forward(x)
         loss = self.loss(logits, y)
         return {'val_loss' : loss}
@@ -98,7 +102,7 @@ class LightningUNet(pl.LightningModule):
     
     def prepare_data(self):
         samples = self.get_samples()
-        dataset = DroneDeployDataset(samples = samples, transform = albumentations.Compose([ albumentations.LongestMaxSize(max_size = 300, p=1)], p=1))
+        dataset = DroneDeployDataset(samples = samples, transform = albumentations.Compose([ albumentations.LongestMaxSize(max_size = 256, p=1)], p=1))
         
         self.train_data, self.test_data = torch.utils.data.random_split(dataset, [int(0.8 * len(dataset)), int(0.2 * len(dataset))])
 
@@ -107,7 +111,7 @@ class LightningUNet(pl.LightningModule):
 
 
     def val_dataloader(self):
-        return DataLoader(self.test_data, shuffle = True,  batch_size = 32)
+        return DataLoader(self.test_data, shuffle = False,   batch_size = 32)
 
     #def test_dataloader(self):
     #    return DataLoader(self.test_data, batch_size = 32)
