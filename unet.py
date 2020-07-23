@@ -82,14 +82,14 @@ class LightningUNet(pl.LightningModule):
         x = train_batch['features'].to(device='cuda', dtype = torch.float32)
         y = train_batch['masks'].to(device='cuda', dtype = torch.long)
         logits = self.forward(x)
-        tr_loss = F.cross_entropy(logits, y[: ,:, :, :, 0])
+        tr_loss = nn.CrossEntropyLoss()(logits, y[:, :, :, 0])
         return {'loss' : tr_loss}
 
     def validation_step(self, val_batch, val_idx):
         x_val = val_batch['features'].to(device='cuda', dtype = torch.float32)
         y_val = val_batch['masks'].to(device='cuda', dtype = torch.long)
         val_logits = self.forward(x_val)
-        val_loss = F.cross_entropy(val_logits, y_val[:, :, :,:,  0])
+        val_loss = nn.CrossEntropyLoss()(val_logits, y_val[:, :, :, 0])
         return {'val_loss' : val_loss}
 
 
@@ -123,7 +123,8 @@ class LightningUNet(pl.LightningModule):
 def main():
 
     model = LightningUNet(n_class = 6)
-    trainer = pl.Trainer(gpus=1)
+    os.makedirs('results', exist_ok=True)
+    trainer = pl.Trainer(gpus=1, default_save_path='results')
 
     trainer.fit(model)
 

@@ -33,7 +33,7 @@ class DroneDeployDataset(Dataset):
         return {
             "image_id" : Path(image_path).stem, 
             "features" : tensor_from_rgb_image(image), 
-            "masks" : torch.unsqueeze(mask, 0).float(), 
+            "masks" :   mask, 
             }
 
 
