@@ -45,7 +45,7 @@ class LightningUNet(pl.LightningModule):
         self.uconv3 = dconv(256 + 512, 256)
         self.uconv2 = dconv(128 + 256, 128)
         self.uconv1 = dconv(64 + 128, 64)
-        self.lconv  = nn.Conv2d(64, self.n_class, 1)
+        self.lconv  = nn.Conv2d(64, self.n_class, kernel_size = 1)
 
     def forward(self, x):
 
@@ -75,23 +75,22 @@ class LightningUNet(pl.LightningModule):
         out = self.lconv(x)
         return out
 
-    def loss(self, logits, labels):
-        return nn.NLLLoss(logits, labels)
-
+    #def loss(self):
+    #    return nn.NLLLoss()
 
     def training_step(self, train_batch, batch_idx):
         x = train_batch['features'].to(device='cuda', dtype = torch.float32)
         y = train_batch['masks'].to(device='cuda', dtype = torch.long)
         logits = self.forward(x)
-        loss = self.loss(logits, y)
-        return {'loss' : loss}
+        tr_loss = F.cross_entropy(logits, y[: ,:, :, :, 0])
+        return {'loss' : tr_loss}
 
     def validation_step(self, val_batch, val_idx):
-        x = val_batch['features'].to(device='cuda', dtype = torch.float32)
-        y = val_batch['masks'].to(device='cuda', dtype = torch.long)
-        logits = self.forward(x)
-        loss = self.loss(logits, y)
-        return {'val_loss' : loss}
+        x_val = val_batch['features'].to(device='cuda', dtype = torch.float32)
+        y_val = val_batch['masks'].to(device='cuda', dtype = torch.long)
+        val_logits = self.forward(x_val)
+        val_loss = F.cross_entropy(val_logits, y_val[:, :, :,:,  0])
+        return {'val_loss' : val_loss}
 
 
     def get_samples(self):
@@ -107,11 +106,11 @@ class LightningUNet(pl.LightningModule):
         self.train_data, self.test_data = torch.utils.data.random_split(dataset, [int(0.8 * len(dataset)), int(0.2 * len(dataset))])
 
     def train_dataloader(self):
-        return DataLoader(self.train_data, batch_size = 32)
+        return DataLoader(self.train_data, batch_size = 8)
 
 
     def val_dataloader(self):
-        return DataLoader(self.test_data, shuffle = False,   batch_size = 32)
+        return DataLoader(self.test_data, shuffle = False,   batch_size = 8)
 
     #def test_dataloader(self):
     #    return DataLoader(self.test_data, batch_size = 32)
@@ -123,7 +122,7 @@ class LightningUNet(pl.LightningModule):
 
 def main():
 
-    model = LightningUNet(n_class = 7)
+    model = LightningUNet(n_class = 6)
     trainer = pl.Trainer(gpus=1)
 
     trainer.fit(model)
