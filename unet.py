@@ -7,6 +7,7 @@ import torch.nn.functional as F
 import torchvision
 import torchvision.models 
 import pytorch_lightning as pl 
+from pytorch_lightning.callbacks.model_checkpoint import ModelCheckpoint
 from src.dataset import DroneDeployDataset
 
 def swish(input):
@@ -75,22 +76,30 @@ class LightningUNet(pl.LightningModule):
         out = self.lconv(x)
         return out
 
-    #def loss(self):
-    #    return nn.NLLLoss()
+    def loss(self, logits, y):
+        return nn.CrossEntropyLoss()(logits, y)
 
     def training_step(self, train_batch, batch_idx):
         x = train_batch['features'].to(device='cuda', dtype = torch.float32)
         y = train_batch['masks'].to(device='cuda', dtype = torch.long)
         logits = self.forward(x)
-        tr_loss = nn.CrossEntropyLoss()(logits, y[:, :, :, 0])
+        tr_loss = self.loss(logits, y[:, :, :, 0])
         return {'loss' : tr_loss}
 
     def validation_step(self, val_batch, val_idx):
         x_val = val_batch['features'].to(device='cuda', dtype = torch.float32)
         y_val = val_batch['masks'].to(device='cuda', dtype = torch.long)
         val_logits = self.forward(x_val)
-        val_loss = nn.CrossEntropyLoss()(val_logits, y_val[:, :, :, 0])
+        val_loss = self.loss(val_logits, y_val[:, :, :, 0])
         return {'val_loss' : val_loss}
+
+    def validation_epoch_end(self, outputs):
+        val_los_mean = torch.stack([x['val_loss'] for x in outputs]).mean()
+        return {'val_loss' : val_loss_mean}
+    
+    def validation_end(self, outputs):
+        val_loss_mean = torch.stack([x['val_loss'] for x in outputs]).mean()
+        return {'val_loss' : val_loss_mean}
 
 
     def get_samples(self):
@@ -103,14 +112,14 @@ class LightningUNet(pl.LightningModule):
         samples = self.get_samples()
         dataset = DroneDeployDataset(samples = samples, transform = albumentations.Compose([ albumentations.LongestMaxSize(max_size = 256, p=1)], p=1))
         
-        self.train_data, self.test_data = torch.utils.data.random_split(dataset, [int(0.8 * len(dataset)), int(0.2 * len(dataset))])
+        self.train_data, self.val_data = torch.utils.data.random_split(dataset, [int(0.8 * len(dataset)), int(0.2 * len(dataset))])
 
     def train_dataloader(self):
         return DataLoader(self.train_data, batch_size = 8)
 
 
     def val_dataloader(self):
-        return DataLoader(self.test_data, shuffle = False,   batch_size = 8)
+        return DataLoader(self.val_data, shuffle = False,   batch_size = 8)
 
     #def test_dataloader(self):
     #    return DataLoader(self.test_data, batch_size = 32)
@@ -121,11 +130,24 @@ class LightningUNet(pl.LightningModule):
         return optimizer 
 
 def main():
-
     model = LightningUNet(n_class = 6)
     os.makedirs('results', exist_ok=True)
-    trainer = pl.Trainer(gpus=1, default_save_path='results')
 
+    checkpoint_callback = ModelCheckpoint(
+            filepath = "results", 
+            verbose = True, 
+            monitor = "val_loss", 
+            mode = "min", 
+            prefix = "", 
+            )
+
+    trainer = pl.Trainer(gpus=1, default_save_path='results', 
+    max_nb_epochs = 100,
+    overfit_pct=0.02, 
+    checkpoint_callback=checkpoint_callback, 
+    check_val_every_n_epoch=1, 
+    show_progress_bar=True,
+    )
     trainer.fit(model)
 
 

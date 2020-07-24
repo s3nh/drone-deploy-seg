@@ -6,3 +6,4 @@ dataset-medium/*
 *.ipynb
 /lightning_logs/*
 __pycache__/
+/results/
