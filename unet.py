@@ -139,13 +139,12 @@ def main():
             monitor = "val_loss", 
             mode = "min", 
             prefix = "", 
+    
             )
 
     trainer = pl.Trainer(gpus=1, default_save_path='results', 
-    max_nb_epochs = 100,
     overfit_pct=0.02, 
     checkpoint_callback=checkpoint_callback, 
-    check_val_every_n_epoch=1, 
     show_progress_bar=True,
     )
     trainer.fit(model)
