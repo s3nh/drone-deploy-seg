@@ -143,7 +143,7 @@ def main():
             )
 
     trainer = pl.Trainer(gpus=1, default_save_path='results', 
-    overfit_pct=0.02, 
+    max_epochs = 100,
     checkpoint_callback=checkpoint_callback, 
     show_progress_bar=True,
     )
