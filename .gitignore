@@ -7,3 +7,4 @@ dataset-medium/*
 /lightning_logs/*
 __pycache__/
 /results/
+*results*/
