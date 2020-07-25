@@ -12,7 +12,7 @@ def main():
     model = LightningEnet(num_classes = 6)
     os.makedirs('enet_results', exist_ok = True)
     checkpoint_callback = ModelCheckpoint(
-            filepath = "results", 
+            filepath = "enet_results", 
             verbose = True, 
             monitor = "val_loss", 
             mode = "min", 

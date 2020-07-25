@@ -678,13 +678,8 @@ class LightningEnet(pl.LightningModule):
     def train_dataloader(self):
         return DataLoader(self.train_data, batch_size = 8)
 
-
     def val_dataloader(self):
         return DataLoader(self.val_data, shuffle = False,   batch_size = 8)
-
-    #def test_dataloader(self):
-    #    return DataLoader(self.test_data, batch_size = 32)
-
 
     def configure_optimizers(self):
         optimizer = torch.optim.Adam(self.parameters(), lr = 1e-4)
