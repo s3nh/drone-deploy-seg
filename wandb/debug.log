@@ -1,14 +1,10 @@
-2020-07-22 14:03:00,768 DEBUG   MainThread:27759 [wandb_config.py:_load_defaults():154] no defaults not found in config-defaults.yaml
-2020-07-22 14:03:01,005 DEBUG   MainThread:27759 [meta.py:_setup_code_git():49] probe for git information
-2020-07-22 14:03:01,023 DEBUG   MainThread:27759 [run_manager.py:__init__():547] Initialized sync for cloud-seg-dd-ml-segmentation-benchmark/394dipkm
-2020-07-22 14:03:01,026 INFO    MainThread:27759 [run_manager.py:wrap_existing_process():1149] wrapping existing process 27211
-2020-07-22 14:03:01,026 WARNING MainThread:27759 [io_wrap.py:register():108] SIGWINCH handler was not None: <Handlers.SIG_DFL: 0>
-2020-07-22 14:03:01,326 INFO    MainThread:27759 [run_manager.py:init_run():928] system metrics and metadata threads started
-2020-07-22 14:03:01,326 INFO    MainThread:27759 [run_manager.py:wrap_existing_process():1166] informing user process we are ready to proceed
-2020-07-22 14:03:01,330 INFO    MainThread:27759 [run_manager.py:_sync_etc():1298] entering loop for messages from user process
-2020-07-22 14:03:01,331 INFO    MainThread:27759 [run_manager.py:_sync_etc():1321] received message from user process: {"exitcode": 0}
-2020-07-22 14:03:01,332 INFO    MainThread:27759 [run_manager.py:_sync_etc():1408] closing log streams and sending exitcode to W&B
-2020-07-22 14:03:01,332 INFO    MainThread:27759 [run_manager.py:shutdown():1072] shutting down system stats and metadata service
-2020-07-22 14:03:01,777 INFO    Thread-3  :27759 [run_manager.py:_on_file_modified():692] file/dir modified: /home/s3nh/git-s3nh/cloud-seg/wandb/run-20200722_140257-394dipkm/config.yaml
-data service
-2020-07-22 14:03:01,777 INFO    Thread-3  :27759 [394dipkm:run_manager.py:_on_file_modified():692] file/dir modified: /home/s3nh/git-s3nh/cloud-seg/wandb/run-20200722_140257-394dipkm/config.yaml
+2020-07-25 16:02:56,962 DEBUG   MainThread:24353 [wandb_config.py:_load_defaults():154] no defaults not found in config-defaults.yaml
+2020-07-25 16:02:57,201 DEBUG   MainThread:24353 [meta.py:_setup_code_git():49] probe for git information
+2020-07-25 16:02:57,229 DEBUG   MainThread:24353 [run_manager.py:__init__():547] Initialized sync for cloud-seg-dd-ml-segmentation-benchmark/1vbkt5fa
+2020-07-25 16:02:57,232 INFO    MainThread:24353 [run_manager.py:wrap_existing_process():1149] wrapping existing process 24331
+2020-07-25 16:02:57,233 WARNING MainThread:24353 [io_wrap.py:register():108] SIGWINCH handler was not None: <Handlers.SIG_DFL: 0>
+2020-07-25 16:02:57,483 INFO    MainThread:24353 [run_manager.py:init_run():928] system metrics and metadata threads started
+2020-07-25 16:02:57,483 INFO    MainThread:24353 [run_manager.py:wrap_existing_process():1166] informing user process we are ready to proceed
+2020-07-25 16:02:57,484 INFO    MainThread:24353 [run_manager.py:_sync_etc():1298] entering loop for messages from user process
+2020-07-25 16:02:57,971 INFO    Thread-3  :24353 [run_manager.py:_on_file_modified():692] file/dir modified: /home/s3nh/git-s3nh/cloud-seg/wandb/run-20200725_160251-1vbkt5fa/config.yaml
+2020-07-25 16:02:57,971 INFO    Thread-3  :24353 [1vbkt5fa:run_manager.py:_on_file_modified():692] file/dir modified: /home/s3nh/git-s3nh/cloud-seg/wandb/run-20200725_160251-1vbkt5fa/config.yaml

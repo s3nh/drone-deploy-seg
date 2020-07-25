@@ -676,11 +676,11 @@ class LightningEnet(pl.LightningModule):
         self.train_data, self.val_data = torch.utils.data.random_split(dataset, [int(0.8 * len(dataset)), int(0.2 * len(dataset))])
 
     def train_dataloader(self):
-        return DataLoader(self.train_data, batch_size = 8)
+        return DataLoader(self.train_data, batch_size = 16)
 
     def val_dataloader(self):
-        return DataLoader(self.val_data, shuffle = False,   batch_size = 8)
+        return DataLoader(self.val_data, shuffle = False,   batch_size = 16)
 
     def configure_optimizers(self):
-        optimizer = torch.optim.Adam(self.parameters(), lr = 1e-4)
+        optimizer = torch.optim.SGD(self.parameters(), lr = 1e-4)
                                                                    
