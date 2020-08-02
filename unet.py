@@ -110,16 +110,16 @@ class LightningUNet(pl.LightningModule):
     
     def prepare_data(self):
         samples = self.get_samples()
-        dataset = DroneDeployDataset(samples = samples, transform = albumentations.Compose([ albumentations.LongestMaxSize(max_size = 256, p=1)], p=1))
+        dataset = DroneDeployDataset(samples = samples, transform = albumentations.Compose([ albumentations.LongestMaxSize(max_size = 768, p=1)], p=1))
         
-        self.train_data, self.val_data = torch.utils.data.random_split(dataset, [int(0.8 * len(dataset)), int(0.2 * len(dataset))])
+        self.train_data, self.val_data = torch.utils.data.random_split(dataset, [len(dataset) -50, 50])
 
     def train_dataloader(self):
-        return DataLoader(self.train_data, batch_size = 8)
+        return DataLoader(self.train_data, batch_size = 1)
 
 
     def val_dataloader(self):
-        return DataLoader(self.val_data, shuffle = False,   batch_size = 8)
+        return DataLoader(self.val_data, shuffle = False,   batch_size = 1)
 
     #def test_dataloader(self):
     #    return DataLoader(self.test_data, batch_size = 32)

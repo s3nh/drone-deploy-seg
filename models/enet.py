@@ -673,7 +673,7 @@ class LightningEnet(pl.LightningModule):
         samples = self.get_samples()
         dataset = DroneDeployDataset(samples = samples, transform = albumentations.Compose([ albumentations.LongestMaxSize(max_size = 256, p=1)], p=1))
         
-        self.train_data, self.val_data = torch.utils.data.random_split(dataset, [int(0.8 * len(dataset)), int(0.2 * len(dataset))])
+        self.train_data, self.val_data = torch.utils.data.random_split(dataset, [int(0.8 * len(dataset)), int(len(dataset)- (0.8 * len(dataset)))])
 
     def train_dataloader(self):
         return DataLoader(self.train_data, batch_size = 16)

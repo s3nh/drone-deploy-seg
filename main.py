@@ -7,9 +7,11 @@ from torch.utils.data import DataLoader
 from models.enet import LightningEnet
 from pytorch_lightning.callbacks.model_checkpoint import ModelCheckpoint
 import pytorch_lightning as pl
+from unet import LightningUNet
+
 
 def main():
-    model = LightningEnet(num_classes = 6)
+    model = LightningUNet(n_class = 6)
     os.makedirs('enet_results', exist_ok = True)
     checkpoint_callback = ModelCheckpoint(
             filepath = "enet_results", 
