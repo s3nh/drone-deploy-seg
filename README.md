@@ -1,31 +1,41 @@
-#### Drone Deploy Aerial Segmentation 
+#### Semantic Segmentation - Drone Deploy Aerial Dataset
 
 - Pytorch Lightning 
 - https://www.dronedeploy.com/ 
 
-Unet implementation using Pytorch Lightning. 
-
-
+Semantic segmentation implementation based on ```pytorch-lightning```. 
 
 ### Training 
 
+using main.py with predefined data paths (TODO: add hparams)
 
 ```
-python unet.py
+python main.py
 
 ```
 
-### Inference 
+### Prediction
+
+Prediction example at  
 
 ```
 Inference.ipynb 
 
 ```
 
+file 
+
 
 ### Results 
 
-Some results after 16 epochs, trained on 256x256
+Example results on Unet, after 16 epochs, trained on 768x768 resolution.
+
+![results](images/results.jpg)
 
 
+# Todo's
+
+- ENet
+- pspnet 
+- add hparams
 
