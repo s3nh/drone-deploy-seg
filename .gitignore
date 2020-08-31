@@ -8,3 +8,4 @@ dataset-medium/*
 __pycache__/
 /results/
 *results*/
+/images/
